@@ -1,3 +1,4 @@
+import { getToken } from '../auth/helper'
 import { ss } from '@/utils/storage'
 
 const LOCAL_NAME = 'userStorage'
@@ -13,11 +14,12 @@ export interface UserState {
 }
 
 export function defaultSetting(): UserState {
+  const id = (getToken() || '').split('@')[0] || 'ChatGPT Web'
   return {
     userInfo: {
-      avatar: 'https://raw.githubusercontent.com/Chanzhaoyu/chatgpt-web/main/src/assets/avatar.jpg',
-      name: 'ChenZhaoYu',
-      description: 'Star on <a href="https://github.com/Chanzhaoyu/chatgpt-bot" class="text-blue-500" target="_blank" >GitHub</a>',
+      avatar: 'https://source.unsplash.com/128x128/?cat',
+      name: id,
+      description: '低调使用，请勿传播',
     },
   }
 }
