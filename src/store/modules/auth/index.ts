@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { getToken, removeToken, setToken } from './helper'
+import { getAdmin, getToken, removeToken, setAdmin, setToken } from './helper'
 import { store } from '@/store'
 import { fetchSession } from '@/api'
 
@@ -10,18 +10,26 @@ interface SessionResponse {
 
 export interface AuthState {
   token: string | undefined
+  id: string | undefined
+  admin: boolean
   session: SessionResponse | null
 }
 
 export const useAuthStore = defineStore('auth-store', {
   state: (): AuthState => ({
     token: getToken(),
+    id: (getToken() || '').split('@')[0],
+    admin: false,
     session: null,
   }),
 
   getters: {
     isChatGPTAPI(state): boolean {
       return state.session?.model === 'ChatGPTAPI'
+    },
+    isAdmin(state): boolean {
+      state.admin = getAdmin()
+      return state.admin
     },
   },
 
@@ -40,6 +48,11 @@ export const useAuthStore = defineStore('auth-store', {
     setToken(token: string) {
       this.token = token
       setToken(token)
+    },
+
+    setAdmin(admin: boolean) {
+      this.admin = admin
+      setAdmin(admin)
     },
 
     removeToken() {
