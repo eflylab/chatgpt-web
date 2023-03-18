@@ -27,6 +27,7 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+docker-compose.yml
 
 # Environment variables files
 /service/.env
