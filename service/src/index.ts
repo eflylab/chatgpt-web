@@ -76,7 +76,7 @@ router.post('/verify', async (req, res) => {
     if (!isAuth)
       throw new Error('密钥无效 | Secret key is invalid')
 
-    res.send({ status: 'Success', message: 'Verify successfully', data: null })
+    res.send({ status: 'Success', message: 'Verify successfully', data: { isAdmin: process.env.ADMIN === token.trim().split('@')[0] } })
   }
   catch (error) {
     res.send({ status: 'Fail', message: error.message, data: null })
