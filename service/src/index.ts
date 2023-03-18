@@ -4,7 +4,7 @@ import type { ChatMessage } from './chatgpt'
 import { chatConfig, chatReplyProcess, currentModel } from './chatgpt'
 import { auth } from './middleware/auth'
 import { limiter } from './middleware/limiter'
-import { isNotEmptyString } from './utils/is'
+import { isAuthUser, isNotEmptyString } from './utils/is'
 
 const app = express()
 const router = express.Router()
@@ -70,7 +70,8 @@ router.post('/verify', async (req, res) => {
     if (!token)
       throw new Error('Secret key is empty')
 
-    if (process.env.AUTH_SECRET_KEY !== token)
+    const isAuth = isAuthUser(token.trim(), process.env.AUTH_SECRET_KEY.trim())
+    if (!isAuth)
       throw new Error('密钥无效 | Secret key is invalid')
 
     res.send({ status: 'Success', message: 'Verify successfully', data: null })
