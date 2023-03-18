@@ -58,7 +58,7 @@ export function fetchSession<T>() {
   })
 }
 
-export function fetchVerify<T>(token: string) {
+export function fetchVerify<T = any>(token: string) {
   return post<T>({
     url: '/verify',
     data: { token },

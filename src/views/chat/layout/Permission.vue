@@ -9,6 +9,10 @@ interface Props {
   visible: boolean
 }
 
+interface VerifyResult {
+  isAdmin: boolean
+}
+
 defineProps<Props>()
 
 const authStore = useAuthStore()
@@ -31,8 +35,9 @@ async function handleVerify() {
 
   try {
     loading.value = true
-    await fetchVerify(hash)
+    const data = await fetchVerify<VerifyResult>(hash)
     authStore.setToken(hash)
+    authStore.setAdmin(data.data.isAdmin)
     ms.success('success')
     window.location.reload()
   }
