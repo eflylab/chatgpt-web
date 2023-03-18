@@ -17,3 +17,14 @@ export function isBoolean<T extends boolean>(value: T | unknown): value is boole
 export function isFunction<T extends (...args: any[]) => any | void | never>(value: T | unknown): value is T {
   return Object.prototype.toString.call(value) === '[object Function]'
 }
+
+export function isAuthUser(input: string, AUTH_SECRET_KEY: string): boolean {
+  const [username, password] = input.split('@')
+  const users: string[] = AUTH_SECRET_KEY.split(',')
+  for (const user of users) {
+    const [name, pwd] = user.split('@')
+    if (name === username && pwd === password)
+      return true
+  }
+  return false
+}
