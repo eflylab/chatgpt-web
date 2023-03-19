@@ -1,12 +1,9 @@
 import { deCrypto, enCrypto } from '../crypto'
 import type { StorageData } from './storageData'
 
-export function createLocalStorage(options?: { expire?: number | null; crypto?: boolean }) {
-  const DEFAULT_CACHE_TIME = 60 * 60 * 24 * 7
-
-  const { expire, crypto } = Object.assign(
+export function createSessionStorage(options?: { crypto?: boolean }) {
+  const { crypto } = Object.assign(
     {
-      expire: DEFAULT_CACHE_TIME,
       crypto: true,
     },
     options,
@@ -15,15 +12,15 @@ export function createLocalStorage(options?: { expire?: number | null; crypto?: 
   function set<T = any>(key: string, data: T) {
     const storageData: StorageData<T> = {
       data,
-      expire: expire !== null ? new Date().getTime() + expire * 1000 : null,
+      expire: null,
     }
 
     const json = crypto ? enCrypto(storageData) : JSON.stringify(storageData)
-    window.localStorage.setItem(key, json)
+    window.sessionStorage.setItem(key, json)
   }
 
-  function get(key: string) {
-    const json = window.localStorage.getItem(key)
+  function get<T = any>(key: string): T | null {
+    const json = window.sessionStorage.getItem(key)
     if (json) {
       let storageData: StorageData | null = null
 
@@ -37,20 +34,21 @@ export function createLocalStorage(options?: { expire?: number | null; crypto?: 
       if (storageData) {
         const { data, expire } = storageData
         if (expire === null || expire >= Date.now())
-          return data
+          return data as T
       }
 
       remove(key)
       return null
     }
+    return null
   }
 
   function remove(key: string) {
-    window.localStorage.removeItem(key)
+    window.sessionStorage.removeItem(key)
   }
 
   function clear() {
-    window.localStorage.clear()
+    window.sessionStorage.clear()
   }
 
   return {
@@ -61,6 +59,4 @@ export function createLocalStorage(options?: { expire?: number | null; crypto?: 
   }
 }
 
-export const ls = createLocalStorage()
-
-export const ss = createLocalStorage({ expire: null, crypto: false })
+export const sss = createSessionStorage()

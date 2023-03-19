@@ -1,29 +1,29 @@
-import { ss } from '@/utils/storage'
+import { sss } from '@/utils/storage'
 
 const LOCAL_NAME = 'SECRET_TOKEN'
 const LOCAL_ADMIN = 'SECRET_TOKEN_ADMIN'
 
 export function getToken() {
-  return ss.get(LOCAL_NAME)
+  return sss.get(LOCAL_NAME)
 }
 
 export function setToken(token: string) {
-  return ss.set(LOCAL_NAME, token)
+  return sss.set(LOCAL_NAME, token)
 }
 
 export function removeToken() {
   removeAdmin()
-  return ss.remove(LOCAL_NAME)
+  return sss.remove(LOCAL_NAME)
 }
 
 export function setAdmin(admin: boolean) {
-  return ss.set(LOCAL_ADMIN, admin)
+  return sss.set(LOCAL_ADMIN, admin)
 }
 
 export function getAdmin() {
-  return ss.get(LOCAL_ADMIN)
+  return sss.get(LOCAL_ADMIN)
 }
 
 export function removeAdmin() {
-  return ss.remove(LOCAL_ADMIN)
+  return sss.remove(LOCAL_ADMIN)
 }
