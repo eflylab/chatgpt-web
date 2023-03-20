@@ -16,6 +16,7 @@ import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useChatStore, usePromptStore, useUserStore } from '@/store'
 import { fetchChatAPIProcess } from '@/api'
 import { t } from '@/locales'
+import pkg from '@/../package.json'
 
 let controller = new AbortController()
 
@@ -45,6 +46,16 @@ const inputRef = ref<Ref | null>(null)
 
 const userStore = useUserStore()
 const userInfo = computed(() => userStore.userInfo)
+
+if (userInfo.value.version !== pkg.version) {
+  dialog.info({
+    title: `${pkg.version}更新内容`,
+    positiveText: t('common.yes'),
+    content: ' 支持 ChatGPT 的记忆力与性格设置',
+  })
+  userStore.userInfo.version = pkg.version
+  userStore.updateUserInfo(userStore.userInfo)
+}
 
 // 添加PromptStore
 const promptStore = usePromptStore()

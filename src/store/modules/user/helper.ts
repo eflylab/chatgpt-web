@@ -6,6 +6,7 @@ const LOCAL_NAME = 'userStorage'
 export interface UserInfo {
   avatar: string
   name: string
+  version: string
   description: string
   chatgpt_top_p: number
   chatgpt_memory: number
@@ -21,6 +22,7 @@ export function defaultSetting(): UserState {
     userInfo: {
       avatar: 'https://source.unsplash.com/128x128/?cat',
       name: id,
+      version: '',
       description: '低调使用，请勿传播',
       chatgpt_top_p: 0.8,
       chatgpt_memory: 5,
