@@ -76,10 +76,10 @@ function updateChatgptParams(options: Partial<UserInfo>) {
       <div class="flex flex-wrap items-center gap-4">
         <span class="flex-shrink-0 w-[100px]" />
         <div class="w-[400px] text-gray-500">
-          <span v-if="0 === chatgpt_top_p">
+          <span v-if="0.2 === chatgpt_top_p">
             {{ $t('setting.chatgpt_top_p_1_memo') }}
           </span>
-          <span v-else-if="50 === chatgpt_top_p">
+          <span v-else-if="0.8 === chatgpt_top_p">
             {{ $t('setting.chatgpt_top_p_2_memo') }}
           </span>
           <span v-else>
