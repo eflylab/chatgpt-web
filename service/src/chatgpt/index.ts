@@ -6,6 +6,7 @@ import { SocksProxyAgent } from 'socks-proxy-agent'
 import httpsProxyAgent from 'https-proxy-agent'
 import fetch from 'node-fetch'
 import axios from 'axios'
+import { logger } from 'src/utils/logger'
 import { sendResponse } from '../utils'
 import { isNotEmptyString } from '../utils/is'
 import type { ApiModel, ChatContext, ChatGPTUnofficialProxyAPIOptions, ModelConfig } from '../types'
@@ -112,7 +113,7 @@ async function chatReplyProcess(options: RequestOptions) {
         process?.(partialResponse)
       },
     })
-
+    logger(name, ` 性格：${top_p} ,记忆：${memory} \n【${name}】：${message} \n【Chat】：${response.text}`)
     return sendResponse({ type: 'Success', data: response })
   }
   catch (error: any) {
