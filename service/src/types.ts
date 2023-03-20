@@ -4,6 +4,9 @@ export interface RequestProps {
   prompt: string
   options?: ChatContext
   systemMessage: string
+  top_p: number
+  memory: number
+  name: string
 }
 
 export interface ChatContext {
