@@ -13,7 +13,7 @@ import { useUsingContext } from './hooks/useUsingContext'
 import HeaderComponent from './components/Header/index.vue'
 import { HoverButton, SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
-import { useChatStore, usePromptStore } from '@/store'
+import { useChatStore, usePromptStore, useUserStore } from '@/store'
 import { fetchChatAPIProcess } from '@/api'
 import { t } from '@/locales'
 
@@ -42,6 +42,9 @@ const conversationList = computed(() => dataSources.value.filter(item => (!item.
 const prompt = ref<string>('')
 const loading = ref<boolean>(false)
 const inputRef = ref<Ref | null>(null)
+
+const userStore = useUserStore()
+const userInfo = computed(() => userStore.userInfo)
 
 // 添加PromptStore
 const promptStore = usePromptStore()
@@ -89,8 +92,15 @@ async function onConversation() {
   let options: Chat.ConversationRequest = {}
   const lastContext = conversationList.value[conversationList.value.length - 1]?.conversationOptions
 
-  if (lastContext && usingContext.value)
-    options = { ...lastContext }
+  if (lastContext && usingContext.value) {
+    if (checkUserMemoryLimit()) {
+      // 达到限制
+      ms.warning(t('chat.limitContext'))
+    }
+    else {
+      options = { ...lastContext }
+    }
+  }
 
   addChat(
     +uuid,
@@ -111,6 +121,9 @@ async function onConversation() {
     const fetchChatAPIOnce = async () => {
       await fetchChatAPIProcess<Chat.ConversationResponse>({
         prompt: message,
+        memory: userInfo.value.chatgpt_memory,
+        top_p: userInfo.value.chatgpt_top_p,
+        name: userInfo.value.name,
         options,
         signal: controller.signal,
         onDownloadProgress: ({ event }) => {
@@ -242,6 +255,9 @@ async function onRegenerate(index: number) {
     const fetchChatAPIOnce = async () => {
       await fetchChatAPIProcess<Chat.ConversationResponse>({
         prompt: message,
+        memory: userInfo.value.chatgpt_memory,
+        top_p: userInfo.value.chatgpt_top_p,
+        name: userInfo.value.name,
         options,
         signal: controller.signal,
         onDownloadProgress: ({ event }) => {
@@ -389,6 +405,20 @@ function handleClear() {
   })
 }
 
+// 检测用户是否达到上下文限制，达到限制条数返回 true
+function checkUserMemoryLimit() {
+  if (!usingContext.value)
+    return false
+
+  const exists = conversationList.value.length
+  const m_setting = userInfo.value.chatgpt_memory
+  if (exists >= m_setting) {
+    // 达到限制，清除
+    return true
+  }
+  return false
+}
+
 function handleEnter(event: KeyboardEvent) {
   if (!isMobile.value) {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -402,6 +432,8 @@ function handleEnter(event: KeyboardEvent) {
       handleSubmit()
     }
   }
+  if (usingContext.value && checkUserMemoryLimit())
+    ms.warning(t('chat.limitContext'))
 }
 
 function handleStop() {
