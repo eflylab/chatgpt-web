@@ -77,7 +77,7 @@ export default {
     monthlyUsage: '本月使用量',
 
     chatgpt_memory_title: '记忆力',
-    chatgpt_memory_memo: '记忆力越强，ChatGPT 在对话过程中能记住的上下文越多，但会消耗更多的费用',
+    chatgpt_memory_memo: '记忆力越强，ChatGPT 在对话过程中能记住的上下文越多。由于每发送一次对话，都会重复带上当前聊天窗口内所有内容，因此对话轮次越多，后期消耗token会越多，若无必要，可用 New chart',
     chatgpt_memory_choice_1: '5条',
     chatgpt_memory_choice_2: '20条',
     chatgpt_memory_choice_3: '最强记忆(全部)',
