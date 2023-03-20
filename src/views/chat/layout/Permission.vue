@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import { NButton, NInput, NModal, useMessage } from 'naive-ui'
 import { fetchVerify } from '@/api'
-import { useAuthStore } from '@/store'
+import { useAuthStore, useUserStore } from '@/store'
 import Icon403 from '@/icons/403.vue'
 
 interface Props {
@@ -25,6 +25,8 @@ const username = ref('')
 
 const disabled = computed(() => !token.value.trim() || loading.value)
 
+const userStore = useUserStore()
+
 async function handleVerify() {
   const secretKey = token.value.trim()
   const id = username.value.trim()
@@ -39,6 +41,9 @@ async function handleVerify() {
     authStore.setToken(hash)
     authStore.setAdmin(data.data.isAdmin)
     ms.success('success')
+    userStore.userInfo.name = id
+    userStore.updateUserInfo(userStore.userInfo)
+
     window.location.reload()
   }
   catch (error: any) {
