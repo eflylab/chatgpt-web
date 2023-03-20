@@ -23,6 +23,9 @@ export function fetchChatConfig<T = any>() {
 export function fetchChatAPIProcess<T = any>(
   params: {
     prompt: string
+    memory: number
+    top_p: number
+    name: string
     options?: { conversationId?: string; parentMessageId?: string }
     signal?: GenericAbortSignal
     onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void },
@@ -47,6 +50,7 @@ export function fetchChatAPIProcess<T = any>(
   return post<T>({
     url: '/chat-process',
     data,
+    // data: { prompt: params.prompt, options: params.options, systemMessage: settingStore.systemMessage, memory: params.memory, top_p: params.top_p, name: params.name },
     signal: params.signal,
     onDownloadProgress: params.onDownloadProgress,
   })

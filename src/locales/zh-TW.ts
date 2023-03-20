@@ -44,6 +44,7 @@ export default {
     usingContext: '上下文模式',
     turnOnContext: '啟用上下文模式，在此模式下，發送訊息會包含之前的聊天記錄。',
     turnOffContext: '關閉上下文模式，在此模式下，發送訊息不會包含之前的聊天記錄。',
+    limitContext: '已達會話限制，將丟棄當前上下文信息，請重新開始新的聊天。',
     deleteMessage: '刪除訊息',
     deleteMessageConfirm: '是否刪除此訊息?',
     deleteHistoryConfirm: '確定刪除此紀錄?',
@@ -55,6 +56,7 @@ export default {
     setting: '設定',
     general: '總覽',
     advanced: '進階',
+    advance: '高級',
     config: '設定',
     avatarLink: '頭貼連結',
     name: '名稱',
@@ -73,6 +75,21 @@ export default {
     httpsProxy: 'HTTPS Proxy',
     balance: 'API Credit 餘額',
     monthlyUsage: '本月使用量',
+
+    chatgpt_memory_title: '記憶力',
+    chatgpt_memory_memo: '記憶力越強，ChatGPT 在對話過程中能記住的上下文越多，但可能會消耗更多的費用',
+    chatgpt_memory_choice_1: '普通記憶(5條)',
+    chatgpt_memory_choice_2: '中等記憶(20條)',
+    chatgpt_memory_choice_3: '最強記憶(全部)',
+
+    chatgpt_top_p_title: '性格',
+    chatgpt_top_p_1_memo: '傾向於提供精確的分析，減少 ChatGpt 胡說八道的可能性',
+    chatgpt_top_p_2_memo: '兼顧回答的准確性和想像力',
+    chatgpt_top_p_3_memo: '傾向於提供更豐富的資訊',
+    chatgpt_top_p_choice_1: '准確可信',
+    chatgpt_top_p_choice_2: '平衡性格',
+    chatgpt_top_p_choice_3: '發散思維',
+
   },
   store: {
     siderButton: '提示詞商店',

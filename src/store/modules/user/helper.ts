@@ -7,6 +7,8 @@ export interface UserInfo {
   avatar: string
   name: string
   description: string
+  chatgpt_top_p: number
+  chatgpt_memory: number
 }
 
 export interface UserState {
@@ -20,6 +22,8 @@ export function defaultSetting(): UserState {
       avatar: 'https://source.unsplash.com/128x128/?cat',
       name: id,
       description: '低调使用，请勿传播',
+      chatgpt_top_p: 0.8,
+      chatgpt_memory: 5,
     },
   }
 }
