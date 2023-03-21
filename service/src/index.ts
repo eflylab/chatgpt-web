@@ -19,6 +19,12 @@ app.all('*', (_, res, next) => {
   next()
 })
 
+router.get('/showip', (req, res) => {
+  const headers = req.headers
+  const clientIp = headers['cf-connecting-ip'] || req.connection.remoteAddress
+  res.send({ ip: clientIp, headers })
+})
+
 router.post('/chat-process', [auth, limiter], async (req, res) => {
   res.setHeader('Content-type', 'application/octet-stream')
 
