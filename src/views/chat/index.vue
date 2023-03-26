@@ -12,7 +12,7 @@ import { useUsingContext } from './hooks/useUsingContext'
 import HeaderComponent from './components/Header/index.vue'
 import { HoverButton, SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
-import { useChatStore, usePromptStore, useUserStore } from '@/store'
+import { useChatStore, usePromptStore, useSettingStore, useUserStore } from '@/store'
 import { fetchChatAPIProcess } from '@/api'
 import { t } from '@/locales'
 import pkg from '@/../package.json'
@@ -56,6 +56,7 @@ if (userInfo.value.version !== pkg.version) {
 
 // 添加PromptStore
 const promptStore = usePromptStore()
+const settingStore = useSettingStore()
 
 // 使用storeToRefs，保证store修改后，联想部分能够重新渲染
 const { promptList: promptTemplate } = storeToRefs<any>(promptStore)
@@ -129,8 +130,6 @@ async function onConversation() {
     const fetchChatAPIOnce = async () => {
       await fetchChatAPIProcess<Chat.ConversationResponse>({
         prompt: message,
-        memory: userInfo.value.chatgpt_memory,
-        top_p: userInfo.value.chatgpt_top_p,
         name: userInfo.value.name,
         options,
         signal: controller.signal,
@@ -263,8 +262,6 @@ async function onRegenerate(index: number) {
     const fetchChatAPIOnce = async () => {
       await fetchChatAPIProcess<Chat.ConversationResponse>({
         prompt: message,
-        memory: userInfo.value.chatgpt_memory,
-        top_p: userInfo.value.chatgpt_top_p,
         name: userInfo.value.name,
         options,
         signal: controller.signal,
@@ -419,7 +416,7 @@ function checkUserMemoryLimit() {
     return false
 
   const exists = conversationList.value.length
-  const m_setting = userInfo.value.chatgpt_memory
+  const m_setting = settingStore.chatgpt_memory
   if (exists >= m_setting) {
     // 达到限制，清除
     return true

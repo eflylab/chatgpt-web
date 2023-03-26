@@ -91,7 +91,7 @@ let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
 })()
 
 async function chatReplyProcess(options: RequestOptions) {
-  const { message, lastContext, process, systemMessage, temperature, top_p, name } = options
+  const { message, lastContext, process, systemMessage, temperature, top_p, memory, name } = options
   try {
     let options: SendMessageOptions = { timeoutMs }
 
@@ -116,7 +116,7 @@ async function chatReplyProcess(options: RequestOptions) {
         process?.(partialResponse)
       },
     })
-    logger(name, ` 性格：${top_p} ,记忆：${memory} \n【${name}】：${message} \n【Chat】：${response.text}`)
+    logger(name, ` 性格：${top_p} ,记忆：${memory}，systemMessage: ${systemMessage} \n【${name}】：${message} \n【Chat】：${response.text}`)
     return sendResponse({ type: 'Success', data: response })
   }
   catch (error: any) {

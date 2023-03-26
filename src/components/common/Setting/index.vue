@@ -3,7 +3,6 @@ import { computed, ref } from 'vue'
 import { NModal, NTabPane, NTabs } from 'naive-ui'
 import General from './General.vue'
 import Advanced from './Advanced.vue'
-import Advance from './Advance.vue'
 import About from './About.vue'
 import { useAuthStore } from '@/store'
 import { SvgIcon } from '@/components/common'
@@ -21,9 +20,8 @@ const emit = defineEmits<Emit>()
 const authStore = useAuthStore()
 const isChatGPTAPI = computed<boolean>(() => !!authStore.isChatGPTAPI)
 
-// const active = ref('General')
-// 新增高级设置 并设置为默认tab
-const active = ref('Advance')
+// 默认 tab
+const active = ref('General')
 
 const show = computed({
   get() {
@@ -39,13 +37,6 @@ const show = computed({
   <NModal v-model:show="show" :auto-focus="false" preset="card" style="width: 95%; max-width: 640px">
     <div>
       <NTabs v-model:value="active" type="line" animated>
-        <NTabPane name="Advance" tab="Advance">
-          <template #tab>
-            <SvgIcon class="text-lg" icon="ri:list-settings-line" />
-            <span class="ml-2">{{ $t('setting.advance') }}</span>
-          </template>
-          <Advance />
-        </NTabPane>
         <NTabPane name="General" tab="General">
           <template #tab>
             <SvgIcon class="text-lg" icon="ri:file-user-line" />
