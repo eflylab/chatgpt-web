@@ -3,6 +3,87 @@
 > 声明：此项目只发布于 GitHub，基于 MIT 协议，免费且作为开源学习使用。并且不会有任何形式的卖号、付费服务、讨论群、讨论组等行为。谨防受骗。
 
 更多功能：[chatgpt-web-plus](https://github.com/Chanzhaoyu/chatgpt-web-plus)
+## 说明
+> **此项目 Fork 自 [Chanzhaoyu/chatgpt-web](https://github.com/Chanzhaoyu/chatgpt-web), 除了定时合并该分支, 新增了部分特色功能, 如下：**
+</br>
+
+1. 专注于易用、易部署、不操心。对小白用户友好，部署和使用的门槛比原版更低
+
+	 1.	可以随机生成头像，不需要自己去找头像链接
+   2. 附带打包好的前端资源，自己部署不再需要安装开发环境
+
+2. 支持多帐号
+3. 可以微调参数：通过设置可以调整`ChatGpt`的性格
+4. 可选择开启服务端保存对话日志功能
+### 多用户
+
+![cover](./docs/c02.png)
+
+### 性格微调功能
+![cover3](./docs/c01.png)
+
+
+## 快速部署
+
+如果你不需要自己开发，只需要部署使用，可以直接跳到 [使用最新版本docker镜像启动](https://registry.hub.docker.com/r/eflylab/chatgpt-web/)
+## 使用最新版本docker镜像启动
+
+- 如果你只是想自己使用docker部署，可以直接使用我已经打包好的镜像和前端资源
+- 创建自己的`docker-compose.yml`文件。
+```
+version: '3'
+
+services:
+  app:
+    container_name: eflylab-chatgpt-web
+    image: eflylab/chatgpt-web # 总是使用 latest ,更新时重新 pull 该 tag 镜像即可
+    volumes:
+      # 当前目录下的logs映射日志目录
+      - ./logs:/app/logs
+    ports:
+      - 3002:3002
+    environment:
+      # 二选一 建议采用key方式
+      OPENAI_API_KEY: sk-xxx
+      # 二选一
+      # OPENAI_ACCESS_TOKEN: xxx
+      # API接口地址，可选，设置 OPENAI_API_KEY 时可用
+      # OPENAI_API_BASE_URL: xxx
+      # API模型，可选，设置 OPENAI_API_KEY 时可用
+      OPENAI_API_MODEL: gpt-3.5-turbo
+      # 反向代理，可选
+      # API_REVERSE_PROXY: xxx
+      # 访问权限密钥，可选，用户名@密码，多用户英文逗号
+      AUTH_SECRET_KEY: user1@pwd1,user2@pwd2,user3@p3
+      # 指定管理员 可选
+      # ADMIN: user1
+      # 超时，单位毫秒，可选
+      TIMEOUT_MS: 120000
+      # 开启日志 可选，不设置则不开启服务端对话日志
+      LOGDIR: /app/logs/
+      # Socks代理，可选，和 SOCKS_PROXY_PORT 一起时生效
+      # SOCKS_PROXY_HOST: xxx
+      # Socks代理端口，可选，和 SOCKS_PROXY_HOST 一起时生效
+      # SOCKS_PROXY_PORT: xxx
+      # HTTPS 代理，可选，支持 http，https，socks5
+      # HTTPS_PROXY: http://xxx:7890
+```
+
+- 最后进入文件夹 `/docker-compose` 运行以下命令
+
+```shell
+	# 前台运行
+	docker-compose up
+	# 或后台运行 http://ip:3002 访问
+	docker-compose up -d
+	# 停止服务并卸载
+	docker-compose down
+	# 停止服务后删除镜像
+	docker rmi eflylab/chatgpt-web
+```
+**建议先在前台运行试用一下，看看有没有报错，如果启动和使用都没有问题，再改成后台运行。**
+
+## 以下为原版介绍
 
 ![cover](./docs/c1.png)
 ![cover2](./docs/c2.png)
