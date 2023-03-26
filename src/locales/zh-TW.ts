@@ -88,6 +88,8 @@ export default {
     chatgpt_top_p_choice_1: '准確可信',
     chatgpt_top_p_choice_2: '平衡性格',
     chatgpt_top_p_choice_3: '發散思維',
+    about_head: '本項目原作者為Chanzhaoyu，經eflyfeng分叉和修改，基於 MIT 協議開源。',
+    about_body: '如果你覺得此項目對你有幫助，請在Github給我點個Star；如果你希望捐助，請捐助原作者，謝謝你！',
 
   },
   store: {

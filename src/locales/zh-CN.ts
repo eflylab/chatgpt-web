@@ -88,6 +88,8 @@ export default {
     chatgpt_top_p_choice_1: '准确可信',
     chatgpt_top_p_choice_2: '平衡性格',
     chatgpt_top_p_choice_3: '发散思维',
+    about_head: '本项目原作者为Chanzhaoyu, 经 eflyfeng 分叉和修改，基于 MIT 协议开源。',
+    about_body: '如果你觉得此项目对你有帮助，请在Github支持原作者；如果你希望捐助，请捐助原作者，谢谢你！',
   },
   store: {
     siderButton: '提示词商店',
