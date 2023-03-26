@@ -23,8 +23,6 @@ export function fetchChatConfig<T = any>() {
 export function fetchChatAPIProcess<T = any>(
   params: {
     prompt: string
-    memory: number
-    top_p: number
     name: string
     options?: { conversationId?: string; parentMessageId?: string }
     signal?: GenericAbortSignal

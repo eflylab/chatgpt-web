@@ -8,8 +8,6 @@ export interface UserInfo {
   name: string
   version: string
   description: string
-  chatgpt_top_p: number
-  chatgpt_memory: number
 }
 
 export interface UserState {
@@ -24,8 +22,6 @@ export function defaultSetting(): UserState {
       name: id,
       version: '',
       description: '低调使用，请勿传播',
-      chatgpt_top_p: 0.8,
-      chatgpt_memory: 5,
     },
   }
 }

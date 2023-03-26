@@ -88,6 +88,9 @@ export default {
     chatgpt_top_p_choice_1: 'Accurate',
     chatgpt_top_p_choice_2: 'Balanced personality',
     chatgpt_top_p_choice_3: 'Exploratory',
+    about_head: 'This project was created by Chanzhaoyu, and has been forked and modified by eflyfeng. Its released under the MIT License.',
+    about_body: 'If you find this helpful, please give me a star on GitHub. If you would like to make a donate, please donate to the original author Chanzhaoyu. Thank you!',
+
   },
   store: {
     siderButton: 'Prompt Store',
