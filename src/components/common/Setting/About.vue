@@ -48,7 +48,7 @@ onMounted(() => {
         ChatGpt Web - {{ pkg.version }}
       </h2>
       <a
-        href="https://github.com/eflylab/chatgpt-web"
+        href="https://github.com/Chanzhaoyu/chatgpt-web"
         target="_blank"
         class="text-[#4b9e5f] relative flex items-center"
       >
