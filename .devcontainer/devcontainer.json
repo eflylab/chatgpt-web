@@ -1,0 +1,24 @@
+{
+  "name": "chatgpt-web-dev",
+	"dockerFile":"Dockerfile",
+  "workspaceFolder": "/app",
+	"customizations":{
+		"vscode": {
+			"extensions": [
+				"dbaeumer.vscode-eslint",
+				"Vue.volar"],
+				"settings": {
+					"terminal.integrated.defaultProfile.linux": "/bin/sh",
+					"eslint.runtime": "node"
+				}
+		}
+	},
+	"postCreateCommand":"pnpm bootstrap && cd ./service && pnpm install",
+	"workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind,consistency=cached",
+	"mounts": [
+    "source=node_modules,target=/app/node_modules,type=volume",
+    "source=service_node_modules,target=/app/service/node_modules,type=volume",
+    "source=pnpm-store,target=/app/.pnpm-store,type=volume"
+  ],
+  "forwardPorts": [1002, 3002]
+}
