@@ -13,6 +13,7 @@ interface ConfigState {
   socksProxy?: string
   httpsProxy?: string
   usage?: string
+  balance?: string
 }
 
 const authStore = useAuthStore()
