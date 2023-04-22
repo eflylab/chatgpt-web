@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { NButton, NInput, NSlider, useMessage, NRadioButton, NRadioGroup } from 'naive-ui'
+import { NButton, NInput, NSlider, useMessage } from 'naive-ui'
 import { useSettingStore } from '@/store'
 import type { SettingsState } from '@/store/modules/settings/helper'
 import { t } from '@/locales'
@@ -11,7 +11,6 @@ const ms = useMessage()
 
 const systemMessage = ref(settingStore.systemMessage ?? '')
 // start 记忆与性格
-const chatgpt_top_p = ref(settingStore.chatgpt_top_p ?? 0.8)
 const chatgpt_memory = ref(settingStore.chatgpt_memory ?? 5)
 // end 记忆与性格
 
@@ -65,50 +64,7 @@ function handleReset() {
           {{ $t('setting.chatgpt_memory_memo') }}
         </div>
       </div>
-      <div class="flex flex-wrap items-center gap-4">
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.chatgpt_top_p_title') }}</span>
-        <div class="w-[400px] text-gray-500">
-          <NRadioGroup
-            v-model:value="chatgpt_top_p"
-            name="radiobuttongroup2"
-            size="medium"
-            @update:value="updateSettings({ chatgpt_top_p })"
-          >
-            <NRadioButton
-              :key="0.2"
-              :value="0.2"
-            >
-              {{ $t('setting.chatgpt_top_p_choice_1') }}
-            </NRadioButton>
-            <NRadioButton
-              :key="0.8"
-              :value="0.8"
-            >
-              {{ $t('setting.chatgpt_top_p_choice_2') }}
-            </NRadioButton>
-            <NRadioButton
-              :key="1.2"
-              :value="1.2"
-            >
-              {{ $t('setting.chatgpt_top_p_choice_3') }}
-            </NRadioButton>
-          </NRadioGroup>
-        </div>
-      </div>
-      <div class="flex flex-wrap items-center gap-4">
-        <span class="flex-shrink-0 w-[100px]" />
-        <div class="w-[400px] text-gray-500">
-          <span v-if="0.2 === chatgpt_top_p">
-            {{ $t('setting.chatgpt_top_p_1_memo') }}
-          </span>
-          <span v-else-if="0.8 === chatgpt_top_p">
-            {{ $t('setting.chatgpt_top_p_2_memo') }}
-          </span>
-          <span v-else>
-            {{ $t('setting.chatgpt_top_p_3_memo') }}
-          </span>
-        </div>
-      </div>
+
       <!-- 记忆与性能设置 end -->
       <div class="flex items-center space-x-4">
         <span class="flex-shrink-0 w-[120px]">{{ $t('setting.temperature') }} </span>
