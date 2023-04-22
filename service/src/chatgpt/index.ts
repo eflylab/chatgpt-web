@@ -5,7 +5,6 @@ import { ChatGPTAPI, ChatGPTUnofficialProxyAPI } from 'chatgpt'
 import { SocksProxyAgent } from 'socks-proxy-agent'
 import httpsProxyAgent from 'https-proxy-agent'
 import fetch from 'node-fetch'
-import axios from 'axios'
 import { logger } from 'src/utils/logger'
 import { sendResponse } from '../utils'
 import { isNotEmptyString } from '../utils/is'
@@ -94,7 +93,6 @@ async function chatReplyProcess(options: RequestOptions) {
         options.systemMessage = systemMessage
       options.completionParams = { model, temperature, top_p }
     }
-
     if (lastContext != null) {
       if (apiModel === 'ChatGPTAPI')
         options.parentMessageId = lastContext.parentMessageId
@@ -102,7 +100,6 @@ async function chatReplyProcess(options: RequestOptions) {
         options = { ...lastContext }
     }
     options.name = name
-    options.completionParams = { temperature: top_p }
 
     const response = await api.sendMessage(message, {
       ...options,
@@ -110,7 +107,7 @@ async function chatReplyProcess(options: RequestOptions) {
         process?.(partialResponse)
       },
     })
-    logger(name, ` 性格：${top_p} ,记忆：${memory}，systemMessage: ${systemMessage} \n【${name}】：${message} \n【Chat】：${response.text}`)
+    logger(name, ` top_p=${top_p} ，temperature=${temperature},记忆=${memory}，systemMessage: ${systemMessage.replaceAll('\n', ' ')} \n【${name}】：${message} \n【Chat】：${response.text}`)
     return sendResponse({ type: 'Success', data: response })
   }
   catch (error: any) {
@@ -132,7 +129,6 @@ async function fetchUsage() {
   const API_BASE_URL = isNotEmptyString(OPENAI_API_BASE_URL)
     ? OPENAI_API_BASE_URL
     : 'https://api.openai.com'
-
   const [startDate, endDate] = formatDate()
 
   // 每月使用量

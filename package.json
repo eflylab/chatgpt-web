@@ -1,7 +1,7 @@
 {
   "name": "chatgpt-web",
   "version": "2.10.9",
-  "update": "支持 ChatGPT 的记忆力与性格设置",
+  "update": "feat: 添加自定义 temperature 和 top_p",
   "private": false,
   "description": "ChatGPT Web",
   "author": "ChenZhaoYu <chenzhaoyu1994@gmail.com>",
