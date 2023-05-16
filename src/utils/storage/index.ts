@@ -1,3 +1,5 @@
+import { createSessionStorage } from './session'
+
 interface StorageData<T = any> {
   data: T
   expire: number | null
@@ -55,5 +57,7 @@ export function createLocalStorage(options?: { expire?: number | null }) {
 export const ls = createLocalStorage()
 
 export const ss = createLocalStorage({ expire: null })
+
+export const sss = createSessionStorage()
 // export * from './local'
 // export * from './session'
