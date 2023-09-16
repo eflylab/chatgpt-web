@@ -89,6 +89,14 @@ let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
   }
 })()
 
+// 动态规则变量
+// '{{now}}' ->当前日期 yyyy-MM-dd 格式
+function replaceVar(str: string): string {
+  const date = new Date()
+  const now = `${date.getFullYear().toString()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+  return str.replace(/{{now}}/ig, now)
+}
+
 async function chatReplyProcess(options: RequestOptions) {
   const { message, lastContext, process, systemMessage, temperature, top_p, memory, name } = options
   try {
@@ -96,7 +104,7 @@ async function chatReplyProcess(options: RequestOptions) {
 
     if (apiModel === 'ChatGPTAPI') {
       if (isNotEmptyString(systemMessage))
-        options.systemMessage = systemMessage
+        options.systemMessage = replaceVar(systemMessage)
       options.completionParams = { model, temperature, top_p }
     }
     if (lastContext != null) {
