@@ -3,7 +3,7 @@ import type fetch from 'node-fetch'
 
 export interface RequestOptions {
   message: string
-  top_p: number
+  // top_p: number
   memory: number
   name: string
   lastContext?: { conversationId?: string; parentMessageId?: string }

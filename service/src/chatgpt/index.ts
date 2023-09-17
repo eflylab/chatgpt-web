@@ -121,7 +121,7 @@ async function chatReplyProcess(options: RequestOptions) {
         process?.(partialResponse)
       },
     })
-    logger(name, ` top_p=${top_p} ，temperature=${temperature},记忆=${memory}，systemMessage: ${systemMessage.replaceAll('\n', ' ')} \n【${name}】：${message} \n【Chat】：${response.text}`)
+    logger(name, `mode=${options.completionParams.model} top_p=${top_p} ，temperature=${temperature},记忆=${memory}，systemMessage: ${options.systemMessage.replaceAll('\n', ' ')} \n【${name}】：${message} \n【Chat】：${response.text}`)
     return sendResponse({ type: 'Success', data: response })
   }
   catch (error: any) {
