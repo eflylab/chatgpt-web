@@ -26,6 +26,8 @@ function setupProxy(options) {
 }
 setupProxy(options)
 
+
+const stream = false;
 const data = {
   model: 'gpt-3.5-turbo',
   messages: [
@@ -54,6 +56,7 @@ const data = {
       content: '我的名字是什么？我们在讨论什么内容？',
     },
   ],
+	"stream": stream
 };
 (async () => {
   const url = 'https://api.openai.com/v1/chat/completions'
@@ -63,10 +66,35 @@ const data = {
     'Content-Type': 'application/json',
   }
 
-  await options.fetch(url, { headers, method: 'POST', body: JSON.stringify(data) })
-    .then(response => response.json())
-    .then(data => console.log(JSON.stringify(data)))
+  let response = await options.fetch(url, { headers, method: 'POST', body: JSON.stringify(data) })
+    // .then(response => response.json())
+    // .then(data => console.log(JSON.stringify(data)))
     .catch(error => console.log('Error:', error))
+
+		//是否流式输出
+		if(stream){
+			// 检查响应是否正常
+			if (!response.ok) {
+				console.error(`Received a non-OK status: ${response.status}`);
+				return;
+			}
+			// 监听 data 事件
+			response.body.on('data', (chunk) => {
+				console.log(`Received data: ${chunk}`);
+			});
+
+			// 监听 end 事件
+			response.body.on('end', () => {
+				console.log('Stream ended.');
+			});
+		}
+		else{
+			//一次性输出
+			let data =  await response.json();
+			console.info(data);
+			console.log(JSON.stringify(data))
+		}
+
 })()
 
 /*
