@@ -24,6 +24,7 @@ export function fetchChatAPIProcess<T = any>(
   params: {
     prompt: string
     name: string
+    model?: string
     options?: { conversationId?: string; parentMessageId?: string }
     signal?: GenericAbortSignal
     onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void },
@@ -33,6 +34,7 @@ export function fetchChatAPIProcess<T = any>(
 
   let data: Record<string, any> = {
     prompt: params.prompt,
+    model: params.model,
     options: params.options,
   }
 

@@ -20,6 +20,14 @@ export const useChatStore = defineStore('chat-store', {
         return state.chat.find(item => item.uuid === state.active)?.data ?? []
       }
     },
+
+    getChatObjByUuid(state: Chat.ChatState) {
+      return (uuid?: number) => {
+        if (uuid)
+          return state.chat.find(item => item.uuid === uuid) ?? null
+        return state.chat.find(item => item.uuid === state.active) ?? null
+      }
+    },
   },
 
   actions: {
@@ -30,7 +38,7 @@ export const useChatStore = defineStore('chat-store', {
 
     addHistory(history: Chat.History, chatData: Chat.Chat[] = []) {
       this.history.unshift(history)
-      this.chat.unshift({ uuid: history.uuid, data: chatData })
+      this.chat.unshift({ uuid: history.uuid, model: history.model, data: chatData })
       this.active = history.uuid
       this.reloadRoute(history.uuid)
     },
@@ -92,28 +100,36 @@ export const useChatStore = defineStore('chat-store', {
       return null
     },
 
-    addChatByUuid(uuid: number, chat: Chat.Chat) {
+    addChatByUuid(uuid: number, model: string, chat: Chat.Chat) {
       if (!uuid || uuid === 0) {
         if (this.history.length === 0) {
           const uuid = Date.now()
-          this.history.push({ uuid, title: chat.text, isEdit: false })
-          this.chat.push({ uuid, data: [chat] })
+          this.history.push({ uuid, model, title: chat.text, isEdit: false })
+          this.chat.push({ uuid, model, data: [chat] })
           this.active = uuid
           this.recordState()
         }
         else {
           this.chat[0].data.push(chat)
-          if (this.history[0].title === 'New Chat')
+          if (this.history[0].title === 'New Chat') {
             this.history[0].title = chat.text
+            this.history[0].model = model
+          }
           this.recordState()
         }
       }
 
       const index = this.chat.findIndex(item => item.uuid === uuid)
       if (index !== -1) {
+        if (index === 0) {
+          // 第1条对话，设置 模型
+          this.chat[index].model = model
+        }
         this.chat[index].data.push(chat)
-        if (this.history[index].title === 'New Chat')
+        if (this.history[index].title === 'New Chat') {
           this.history[index].title = chat.text
+          this.history[index].model = model
+        }
         this.recordState()
       }
     },

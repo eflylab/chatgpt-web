@@ -1,4 +1,7 @@
 import { ss } from '@/utils/storage'
+import { contextModel } from '@/store/modules/settings/helper'
+
+const default_model = contextModel[0].value
 
 const LOCAL_NAME = 'chatStorage'
 
@@ -7,8 +10,8 @@ export function defaultState(): Chat.ChatState {
   return {
     active: uuid,
     usingContext: true,
-    history: [{ uuid, title: 'New Chat', isEdit: false }],
-    chat: [{ uuid, data: [] }],
+    history: [{ uuid, model: default_model, title: 'New Chat', isEdit: false }],
+    chat: [{ uuid, model: default_model, data: [] }],
   }
 }
 

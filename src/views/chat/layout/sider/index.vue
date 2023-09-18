@@ -7,7 +7,8 @@ import Footer from './Footer.vue'
 import { useAppStore, useChatStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { PromptStore } from '@/components/common'
-
+import { contextModel } from '@/store/modules/settings/helper'
+const default_model = contextModel[0].value
 const appStore = useAppStore()
 const chatStore = useChatStore()
 
@@ -17,7 +18,7 @@ const show = ref(false)
 const collapsed = computed(() => appStore.siderCollapsed)
 
 function handleAdd() {
-  chatStore.addHistory({ title: 'New Chat', uuid: Date.now(), isEdit: false })
+  chatStore.addHistory({ title: 'New Chat', model: default_model, uuid: Date.now(), isEdit: false })
   if (isMobile.value)
     appStore.setSiderCollapsed(true)
 }

@@ -3,7 +3,7 @@ import type { Ref } from 'vue'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { NAutoComplete, NButton, NInput, useDialog, useMessage } from 'naive-ui'
+import { NAutoComplete, NButton, NInput, NPopover, NSelect, useDialog, useMessage } from 'naive-ui'
 import html2canvas from 'html2canvas'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
@@ -16,6 +16,7 @@ import { useChatStore, usePromptStore, useSettingStore, useUserStore } from '@/s
 import { fetchChatAPIProcess } from '@/api'
 import { t } from '@/locales'
 import pkg from '@/../package.json'
+import { contextModel } from '@/store/modules/settings/helper'
 
 let controller = new AbortController()
 
@@ -34,12 +35,24 @@ const { usingContext, toggleUsingContext } = useUsingContext()
 
 const { uuid } = route.params as { uuid: string }
 
-const dataSources = computed(() => chatStore.getChatByUuid(+uuid))
-const conversationList = computed(() => dataSources.value.filter(item => (!item.inversion && !!item.conversationOptions)))
+const chatObj = computed(() => chatStore.getChatObjByUuid(+uuid))
+const dataSource = computed(() => chatStore.getChatByUuid(+uuid))
+
+const conversationList = computed(() => dataSource.value.filter(item => (!item.inversion && !!item.conversationOptions)))
 
 const prompt = ref<string>('')
 const loading = ref<boolean>(false)
 const inputRef = ref<Ref | null>(null)
+const modelOptions = contextModel
+const defModel = chatObj.value?.model || contextModel[0].value
+const model = ref<string>(defModel)
+
+const disabled_change_model = computed(() => {
+  if (chatObj.value?.data?.length)
+    return true
+
+  return false
+})
 
 const userStore = useUserStore()
 const userInfo = computed(() => userStore.userInfo)
@@ -62,7 +75,7 @@ const settingStore = useSettingStore()
 const { promptList: promptTemplate } = storeToRefs<any>(promptStore)
 
 // 未知原因刷新页面，loading 状态不会重置，手动重置
-dataSources.value.forEach((item, index) => {
+dataSource.value.forEach((item, index) => {
   if (item.loading)
     updateChatSome(+uuid, index, { loading: false })
 })
@@ -73,7 +86,6 @@ function handleSubmit() {
 
 async function onConversation() {
   let message = prompt.value
-
   if (loading.value)
     return
 
@@ -84,6 +96,7 @@ async function onConversation() {
 
   addChat(
     +uuid,
+    model.value,
     {
       dateTime: new Date().toLocaleString(),
       text: message,
@@ -113,6 +126,7 @@ async function onConversation() {
 
   addChat(
     +uuid,
+    model.value,
     {
       dateTime: new Date().toLocaleString(),
       text: '',
@@ -131,6 +145,7 @@ async function onConversation() {
       await fetchChatAPIProcess<Chat.ConversationResponse>({
         prompt: message,
         name: userInfo.value.name,
+        model: model.value,
         options,
         signal: controller.signal,
         onDownloadProgress: ({ event }) => {
@@ -145,7 +160,7 @@ async function onConversation() {
             const data = JSON.parse(chunk)
             updateChat(
               +uuid,
-              dataSources.value.length - 1,
+              dataSource.value.length - 1,
               {
                 dateTime: new Date().toLocaleString(),
                 text: lastText + (data.text ?? ''),
@@ -171,7 +186,7 @@ async function onConversation() {
           }
         },
       })
-      updateChatSome(+uuid, dataSources.value.length - 1, { loading: false })
+      updateChatSome(+uuid, dataSource.value.length - 1, { loading: false })
     }
 
     await fetchChatAPIOnce()
@@ -182,7 +197,7 @@ async function onConversation() {
     if (error.message === 'canceled') {
       updateChatSome(
         +uuid,
-        dataSources.value.length - 1,
+        dataSource.value.length - 1,
         {
           loading: false,
         },
@@ -191,12 +206,12 @@ async function onConversation() {
       return
     }
 
-    const currentChat = getChatByUuidAndIndex(+uuid, dataSources.value.length - 1)
+    const currentChat = getChatByUuidAndIndex(+uuid, dataSource.value.length - 1)
 
     if (currentChat?.text && currentChat.text !== '') {
       updateChatSome(
         +uuid,
-        dataSources.value.length - 1,
+        dataSource.value.length - 1,
         {
           text: `${currentChat.text}\n[${errorMessage}]`,
           error: false,
@@ -208,7 +223,7 @@ async function onConversation() {
 
     updateChat(
       +uuid,
-      dataSources.value.length - 1,
+      dataSource.value.length - 1,
       {
         dateTime: new Date().toLocaleString(),
         text: errorMessage,
@@ -232,7 +247,7 @@ async function onRegenerate(index: number) {
 
   controller = new AbortController()
 
-  const { requestOptions } = dataSources.value[index]
+  const { requestOptions } = dataSource.value[index]
 
   let message = requestOptions?.prompt ?? ''
 
@@ -263,6 +278,7 @@ async function onRegenerate(index: number) {
       await fetchChatAPIProcess<Chat.ConversationResponse>({
         prompt: message,
         name: userInfo.value.name,
+        model: model.value,
         options,
         signal: controller.signal,
         onDownloadProgress: ({ event }) => {
@@ -518,7 +534,7 @@ onUnmounted(() => {
           class="w-full max-w-screen-xl m-auto dark:bg-[#101014]"
           :class="[isMobile ? 'p-2' : 'p-4']"
         >
-          <template v-if="!dataSources.length">
+          <template v-if="!dataSource.length">
             <div class="flex items-center justify-center mt-4 text-center text-neutral-300">
               <SvgIcon icon="ri:bubble-chart-fill" class="mr-2 text-3xl" />
               <span>Aha~</span>
@@ -527,7 +543,7 @@ onUnmounted(() => {
           <template v-else>
             <div>
               <Message
-                v-for="(item, index) of dataSources"
+                v-for="(item, index) of dataSource"
                 :key="index"
                 :date-time="item.dateTime"
                 :text="item.text"
@@ -542,7 +558,7 @@ onUnmounted(() => {
                   <template #icon>
                     <SvgIcon icon="ri:stop-circle-line" />
                   </template>
-									{{ t('common.stopResponding') }}
+                  {{ t('common.stopResponding') }}
                 </NButton>
               </div>
             </div>
@@ -552,6 +568,24 @@ onUnmounted(() => {
     </main>
     <footer :class="footerClass">
       <div class="w-full max-w-screen-xl m-auto">
+        <!-- <div class="flex items-center justify-start space-x-2">
+          <span style="font-weight: 500; color: #b33100;">您访问的是测试环境，数据可能随时被删除</span>
+        </div> -->
+        <div class="flex items-center justify-start space-x-2">
+          <span style="display: flex; align-items: center;width: 180px;margin-right: 10px;margin-left: 10px">
+            <NPopover trigger="hover">
+              <template #trigger>
+                <span style="display: inline; white-space: nowrap;">模型：</span>
+              </template>
+              <span>GPT-4 会导致产生更多的费用。注：携带过多上下文，可能导致tokens超过限制</span>
+            </NPopover>
+            <NSelect
+              v-model:value="model"
+              :disabled="disabled_change_model" style="margin-left: 10px" size="small"
+              :options="modelOptions"
+            />
+          </span>
+        </div>
         <div class="flex items-center justify-between space-x-2">
           <HoverButton v-if="!isMobile" @click="handleClear">
             <span class="text-xl text-[#4f555e] dark:text-white">

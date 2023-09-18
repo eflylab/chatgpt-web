@@ -6,6 +6,7 @@ export interface RequestOptions {
   // top_p: number
   memory: number
   name: string
+  model: string
   lastContext?: { conversationId?: string; parentMessageId?: string }
   process?: (chat: ChatMessage) => void
   systemMessage?: string

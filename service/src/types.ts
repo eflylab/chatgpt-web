@@ -1,4 +1,4 @@
-import type { FetchFn } from 'chatgpt'
+import type { ChatGPTAPI, ChatGPTUnofficialProxyAPI, FetchFn } from 'chatgpt'
 
 export interface RequestProps {
   prompt: string
@@ -8,6 +8,7 @@ export interface RequestProps {
   top_p: number
   memory: number
   name: string
+  model: string
 }
 
 export interface ChatContext {
@@ -31,6 +32,11 @@ export interface ModelConfig {
   socksProxy?: string
   httpsProxy?: string
   usage?: string
+}
+
+export interface API {
+  apiModel?: ApiModel
+  api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
 }
 
 export type ApiModel = 'ChatGPTAPI' | 'ChatGPTUnofficialProxyAPI' | undefined

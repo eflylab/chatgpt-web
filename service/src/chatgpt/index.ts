@@ -8,7 +8,7 @@ import fetch from 'node-fetch'
 import { logger } from 'src/utils/logger'
 import { sendResponse } from '../utils'
 import { isNotEmptyString } from '../utils/is'
-import type { ApiModel, ChatContext, ChatGPTUnofficialProxyAPIOptions, ModelConfig } from '../types'
+import type { API, ApiModel, ChatContext, ChatGPTUnofficialProxyAPIOptions, ModelConfig } from '../types'
 import type { RequestOptions, SetProxyOptions, UsageResponse } from './types'
 
 const { HttpsProxyAgent } = httpsProxyAgent
@@ -27,15 +27,15 @@ const ErrorCodeMessage: Record<string, string> = {
 const timeoutMs: number = !isNaN(+process.env.TIMEOUT_MS) ? +process.env.TIMEOUT_MS : 100 * 1000
 const disableDebug: boolean = process.env.OPENAI_API_DISABLE_DEBUG === 'true'
 
-let apiModel: ApiModel
-const model = isNotEmptyString(process.env.OPENAI_API_MODEL) ? process.env.OPENAI_API_MODEL : 'gpt-3.5-turbo'
+const sys_model = isNotEmptyString(process.env.OPENAI_API_MODEL) ? process.env.OPENAI_API_MODEL : 'gpt-3.5-turbo'
 
 if (!isNotEmptyString(process.env.OPENAI_API_KEY) && !isNotEmptyString(process.env.OPENAI_ACCESS_TOKEN))
   throw new Error('Missing OPENAI_API_KEY or OPENAI_ACCESS_TOKEN environment variable')
 
-let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
-
-(async () => {
+const get_api_instance = (model): API => {
+  let apiModel: ApiModel
+  let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
+  model = model || sys_model
   // More Info: https://github.com/transitive-bullshit/chatgpt-api
 
   if (isNotEmptyString(process.env.OPENAI_API_KEY)) {
@@ -87,7 +87,8 @@ let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
     api = new ChatGPTUnofficialProxyAPI({ ...options })
     apiModel = 'ChatGPTUnofficialProxyAPI'
   }
-})()
+  return { api, apiModel }
+}
 
 // 动态规则变量
 // '{{now}}' ->当前日期 yyyy-MM-dd 格式
@@ -98,24 +99,26 @@ function replaceVar(str: string): string {
 }
 
 async function chatReplyProcess(options: RequestOptions) {
-  const { message, lastContext, process, systemMessage, temperature, top_p, memory, name } = options
+  const { message, lastContext, process, systemMessage, temperature, top_p, memory, name, model } = options
+  const ins = get_api_instance(model)
   try {
     let options: SendMessageOptions = { timeoutMs }
 
-    if (apiModel === 'ChatGPTAPI') {
+    if (ins.apiModel === 'ChatGPTAPI') {
       if (isNotEmptyString(systemMessage))
         options.systemMessage = replaceVar(systemMessage)
       options.completionParams = { model, temperature, top_p }
     }
     if (lastContext != null) {
-      if (apiModel === 'ChatGPTAPI')
+      if (ins.apiModel === 'ChatGPTAPI')
         options.parentMessageId = lastContext.parentMessageId
       else
         options = { ...lastContext }
     }
     options.name = name
+    options.model = model
 
-    const response = await api.sendMessage(message, {
+    const response = await ins.api.sendMessage(message, {
       ...options,
       onProgress: (partialResponse) => {
         process?.(partialResponse)
@@ -189,9 +192,10 @@ async function chatConfig() {
   const socksProxy = (process.env.SOCKS_PROXY_HOST && process.env.SOCKS_PROXY_PORT)
     ? (`${process.env.SOCKS_PROXY_HOST}:${process.env.SOCKS_PROXY_PORT}`)
     : '-'
+  const ins = get_api_instance('')
   return sendResponse<ModelConfig>({
     type: 'Success',
-    data: { apiModel, reverseProxy, timeoutMs, socksProxy, httpsProxy, usage },
+    data: { apiModel: ins.apiModel, reverseProxy, timeoutMs, socksProxy, httpsProxy, usage },
   })
 }
 
@@ -224,7 +228,8 @@ function setupProxy(options: SetProxyOptions) {
 }
 
 function currentModel(): ApiModel {
-  return apiModel
+  const ins = get_api_instance('')
+  return ins.apiModel
 }
 
 export type { ChatContext, ChatMessage }

@@ -9,6 +9,15 @@ export interface SettingsState {
   chatgpt_memory: number
 }
 
+export const contextModel = [{
+  label: 'gpt-3.5-turbo',
+  value: 'gpt-3.5-turbo',
+},
+{
+  label: 'gpt-4',
+  value: 'gpt-4',
+}]
+
 export function defaultSetting(): SettingsState {
   const currentDate = new Date().toISOString().split('T')[0]
   return {
